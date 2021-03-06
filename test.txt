@@ -1,0 +1,6 @@
+=== INFO ===
+
+This is a test file to make sure the repository is working.
+:)
+
+=== INFO ===
