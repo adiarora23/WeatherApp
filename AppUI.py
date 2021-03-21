@@ -61,11 +61,19 @@ class WeatherApp:
 
         # Actions for the user:
         # TODO edit this after real API is installed
-        # actions_menu.add_command(label='Change City', command=TBD)
-        actions_menu.add_command(label='Quit', command=self.root.destroy)
+        actions_menu.add_command(label='Display Graph', command=self.display_graph)
+        actions_menu.add_command(label='Change Unit', command=self.celsius_to_fahrenheit)
         actions_menu.add_command(label='Save', command=self.save_weather)
+        actions_menu.add_command(label='Quit', command=self.root.destroy)
 
         self.root.config(menu=menubar)
+
+    # TODO edit these functions for API to use
+    def celsius_to_fahrenheit(self):
+        pass
+
+    def display_graph(self):
+        pass
 
     def save_weather(self):
         saved_file = filedialog.asksaveasfile()
