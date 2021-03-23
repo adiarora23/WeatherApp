@@ -10,6 +10,7 @@ from typing import Tuple, Optional, Union  # Library used for type hinting
 
 
 # ------------------------- GUI Classes -------------------------------
+# testing for Git purposes <-- hopefully you guys can see this
 class WeatherApp:
 
     def __init__(self, api: str) -> None:
