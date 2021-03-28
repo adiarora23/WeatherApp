@@ -2,6 +2,7 @@
 # ^ added this since declaration is required ^
 
 from tkinter import *
+import tkinter as tk
 from main import *
 import json
 from canada_cities import canada
@@ -13,12 +14,11 @@ from typing import Tuple, Optional, Union  # Library used for type hinting
 
 
 # ------------------------- GUI Classes -------------------------------
-# testing for Git purposes <-- hopefully you guys can see this
 class WeatherApp:
 
     def __init__(self, api: str) -> None:
         self.root = Tk()
-        self.root.geometry('375x450')
+        self.root.geometry('1700x700')
         self.root.configure(bg="#34ABCD")
         self.api = api
         self.initGUI()
@@ -41,21 +41,62 @@ class WeatherApp:
         self.space = Label(self.root, bg="#34ABCD")  # adds a space between button and Location text
         self.space.pack()
 
-        self.locationLbl = Label(self.root, text="Location", bg="#34ABCD",
-                                 fg="#FFFFFF", font=("bold", 24))
+        self.locationLbl = Label(self.root, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("bold", 22))
         self.locationLbl.pack()
 
         self.picture = Label(self.root, bg="#34ABCD", image=None)
         self.picture.pack()
 
-        self.weatherLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF",
-                                text="", font=("bold", 17))
+        self.weatherLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 17))
         self.weatherLbl.pack()
 
-        self.desc = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="",
-                          font=("bold", 10))
+        self.desc = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 10))
         self.desc.pack()
-             
+
+        self.weeklyLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="Weekly Forecast:", font=("bold", 17))
+        self.weeklyLbl.pack()
+
+        self.mondayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.mondayLbl.pack(side=tk.LEFT, padx=15)
+
+        self.mondayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.mondayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.tuesdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.tuesdayLbl.pack(side=tk.LEFT)
+
+        self.tuesdayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.tuesdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.wednesdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.wednesdayLbl.pack(side=tk.LEFT)
+
+        self.wednesdayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.wednesdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.thursdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.thursdayLbl.pack(side=tk.LEFT)
+
+        self.thursdayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.thursdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.fridayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.fridayLbl.pack(side=tk.LEFT)
+
+        self.fridayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.fridayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.saturdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.saturdayLbl.pack(side=tk.LEFT)
+
+        self.saturdayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.saturdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+
+        self.sundayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.sundayLbl.pack(side=tk.LEFT)
+
+        self.sundayImg = Label(self.root, bg="#34ABCD", image=None)
+        self.sundayImg.pack(side=tk.LEFT, padx=5, pady=10)
 
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
@@ -66,8 +107,8 @@ class WeatherApp:
 
         # Actions for the user:
         # TODO edit this after real API is installed
-        actions_menu.add_command(label='Display Graph', command=self.display_graph)
-        actions_menu.add_command(label='Change Unit', command=self.celsius_to_fahrenheit)
+        actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
+        actions_menu.add_command(label='Change Unit', command=self.celsius_to_fahrenheit)  # TODO: edit this
         actions_menu.add_command(label='Save', command=self.save_weather)
         actions_menu.add_command(label='Quit', command=self.root.destroy)
 
@@ -81,11 +122,13 @@ class WeatherApp:
         pass
 
     def save_weather(self):
-        saved_file = filedialog.asksaveasfile()
+        city = self.cityName.get()
+        weather = get_weather(city)
+        saved_file = filedialog.asksaveasfile(mode='w', defaultextension='.txt')
         if saved_file is not None:
-            saved_file.write("The city you chose was: " + self.cityName.get() + "\n")
-            saved_file.write("The temperature for that city at the time was: TBD" + "\n")  # will edit these two later
-            saved_file.write("The type of weather for that city at the time was: TBD" + "\n")
+            saved_file.write(f"The city you chose was: {weather[0]}, {weather[1]}\n")
+            saved_file.write(f"The temperature for that city at the time was: {round(weather[2])}°C\n")
+            saved_file.write(f"The type of weather for that city at the time was: {weather[3]}\n")
             saved_file.close()
 
     def search(self) -> None:
@@ -99,8 +142,37 @@ class WeatherApp:
             self.locationLbl['text'] = f"{weather[0]}, {weather[1]}"
             img = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[5]}.png").resize((115, 115)))
             self.picture["image"] = img
-            self.weatherLbl["text"] = f"{round(weather[2])}°C, {weather[3]}"
+            self.weatherLbl["text"] = f"Current temperature: {round(weather[2])}°C, {weather[3]}"
             self.desc["text"] = f"{weather[4]}, feels like {round(weather[6])}°C"
+
+            self.mondayLbl["text"] = f"Monday: {round(weather[8])}°C"
+            mondayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[15]}.png").resize((90, 90)))
+            self.mondayImg["image"] = mondayPic
+
+            self.tuesdayLbl["text"] = f"Tuesday: {round(weather[9])}°C"
+            tuesdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[16]}.png").resize((90, 90)))
+            self.tuesdayImg["image"] = tuesdayPic
+
+            self.wednesdayLbl["text"] = f"Wednesday: {round(weather[10])}°C"
+            wednesdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[17]}.png").resize((90, 90)))
+            self.wednesdayImg["image"] = wednesdayPic
+
+            self.thursdayLbl["text"] = f"Thursday: {round(weather[11])}°C"
+            thursdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[18]}.png").resize((90, 90)))
+            self.thursdayImg["image"] = thursdayPic
+
+            self.fridayLbl["text"] = f"Friday: {round(weather[12])}°C"
+            fridayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[19]}.png").resize((90, 90)))
+            self.fridayImg["image"] = fridayPic
+
+            self.saturdayLbl["text"] = f"Saturday: {round(weather[13])}°C"
+            saturdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[20]}.png").resize((90, 90)))
+            self.saturdayImg["image"] = saturdayPic
+
+            self.sundayLbl["text"] = f"Sunday: {round(weather[14])}°C"
+            sundayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[21]}.png").resize((90, 90)))
+            self.sundayImg["image"] = sundayPic
+
             self.root.mainloop()
         else:
             messagebox.showerror("Search Error",
@@ -109,37 +181,61 @@ class WeatherApp:
 
 # TODO: update weather app with new API.
 # ------------------------- Function class -------------------------------
-def get_cityID(city: str) -> Tuple[Union[str,float]]:
+def get_cityID(city: str) -> Tuple[Union[str, float]]:
     """ Returns the coordinates of the city the user entered"""
     for place in canada:
         if place['name'].lower() == city.lower():
             if place['country'] == 'CA':
-                lat = round(place['coord']['lat'],2)
-                lon = round(place['coord']['lon'],2)
-                return (place['name'],place['country'],lat, lon)
-    return ("","","","")
+                lat = round(place['coord']['lat'], 2)
+                lon = round(place['coord']['lon'], 2)
+                return (place['name'], place['country'], lat, lon)
+    return ("", "", "", "")
+
 
 def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
     """ Returns a tuple containing strings and float """
-    
+
     cityID = get_cityID(city)
     data = requests.get(api_url.format(cityID[2], cityID[3], api_key))
-    
+
     if data:
         data = data.json()
         city = cityID[0]
         country = cityID[1]
         temp = data['current']['temp'] - 273.15
         feels_like = data['current']['feels_like'] - 273.15
-        weekly_forecast = data['daily'] #will be used for displaying other days' weather, 
-                                        #will also be useful in providing data for graphing (i.e. change in temp throughout the week, etc.)
-                                        #Isha can use this info to extract data and make appropriate graphs
+        weekly_forecast = data['daily']  # will be used for displaying other days' weather,
+        # will also be useful in providing data for graphing (i.e. change in temp throughout the week, etc.)
+        # Isha can use this info to extract data and make appropriate graphs
         current_weather = data['current']['weather'][0]['main']
+
+        monday_temp = data['daily'][1]['temp']['day'] - 273.15
+        monday_img = data['daily'][1]['weather'][0]['icon']
+
+        tuesday_temp = data['daily'][2]['temp']['day'] - 273.15
+        tuesday_img = data['daily'][2]['weather'][0]['icon']
+
+        wednesday_temp = data['daily'][3]['temp']['day'] - 273.15
+        wednesday_img = data['daily'][3]['weather'][0]['icon']
+
+        thursday_temp = data['daily'][4]['temp']['day'] - 273.15
+        thursday_img = data['daily'][4]['weather'][0]['icon']
+
+        friday_temp = data['daily'][5]['temp']['day'] - 273.15
+        friday_img = data['daily'][5]['weather'][0]['icon']
+
+        saturday_temp = data['daily'][6]['temp']['day'] - 273.15
+        saturday_img = data['daily'][6]['weather'][0]['icon']
+
+        sunday_temp = data['daily'][7]['temp']['day'] - 273.15
+        sunday_img = data['daily'][7]['weather'][0]['icon']
+
         desc = data['current']['weather'][0]['description']
         img = data['current']['weather'][0]['icon']
 
-        return(city, country, temp, current_weather, desc, img, feels_like, 
-               weekly_forecast)
+        return (city, country, temp, current_weather, desc, img, feels_like,
+                weekly_forecast, monday_temp, tuesday_temp, wednesday_temp, thursday_temp, friday_temp, saturday_temp,
+                sunday_temp, monday_img, tuesday_img, wednesday_img, thursday_img, friday_img, saturday_img, sunday_img)
 
     else:
         return None
