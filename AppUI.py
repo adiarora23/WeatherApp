@@ -2,6 +2,9 @@
 # ^ added this since declaration is required ^
 
 from tkinter import *
+from main import *
+import json
+from canada_cities import canada
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk  # Library used for handling images
 from configparser import ConfigParser  # Library used for config files
@@ -52,6 +55,7 @@ class WeatherApp:
         self.desc = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="",
                           font=("bold", 10))
         self.desc.pack()
+             
 
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
@@ -96,7 +100,7 @@ class WeatherApp:
             img = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[5]}.png").resize((115, 115)))
             self.picture["image"] = img
             self.weatherLbl["text"] = f"{round(weather[2])}°C, {weather[3]}"
-            self.desc["text"] = weather[4]
+            self.desc["text"] = f"{weather[4]}, feels like {round(weather[6])}°C"
             self.root.mainloop()
         else:
             messagebox.showerror("Search Error",
@@ -105,21 +109,37 @@ class WeatherApp:
 
 # TODO: update weather app with new API.
 # ------------------------- Function class -------------------------------
+def get_cityID(city: str) -> Tuple[Union[str,float]]:
+    """ Returns the coordinates of the city the user entered"""
+    for place in canada:
+        if place['name'].lower() == city.lower():
+            if place['country'] == 'CA':
+                lat = round(place['coord']['lat'],2)
+                lon = round(place['coord']['lon'],2)
+                return (place['name'],place['country'],lat, lon)
+    return ("","","","")
+
 def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
     """ Returns a tuple containing strings and float """
-
-    data = requests.get(api_url.format(city, api_key))
-
+    
+    cityID = get_cityID(city)
+    data = requests.get(api_url.format(cityID[2], cityID[3], api_key))
+    
     if data:
         data = data.json()
-        city = data["name"]
-        country = data["sys"]["country"]
-        temp = data["main"]["temp"] - 273.15
-        weather = data["weather"][0]["main"]
-        desc = data["weather"][0]["description"]
-        img = data["weather"][0]["icon"]
+        city = cityID[0]
+        country = cityID[1]
+        temp = data['current']['temp'] - 273.15
+        feels_like = data['current']['feels_like'] - 273.15
+        weekly_forecast = data['daily'] #will be used for displaying other days' weather, 
+                                        #will also be useful in providing data for graphing (i.e. change in temp throughout the week, etc.)
+                                        #Isha can use this info to extract data and make appropriate graphs
+        current_weather = data['current']['weather'][0]['main']
+        desc = data['current']['weather'][0]['description']
+        img = data['current']['weather'][0]['icon']
 
-        return (city, country, temp, weather, desc, img)
+        return(city, country, temp, current_weather, desc, img, feels_like, 
+               weekly_forecast)
 
     else:
         return None
@@ -128,7 +148,7 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
 # ------------------------- Main Loop -------------------------------
 if __name__ == "__main__":
     # TODO: Justin will update API for this.
-    api_url = "https://api.openweathermap.org/data/2.5/weather?q={}&appid={}"  # An exmple API I used; we can change this later
+    api_url = "https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude=minutely,hourly&appid={}"
     file = "config.ini"  # config file that contains the key to access the API data
     config = ConfigParser()  # used to parse through config files
     config.read(file)
