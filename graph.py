@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 import random
-class Graph: #sdfjor;lawefks
+class Graph: #sdfjor;lawefks RETRY
     
     def __init__(self):
         self.labelx = ''
