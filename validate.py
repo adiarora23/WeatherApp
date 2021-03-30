@@ -1,6 +1,6 @@
 #object for validate methods
 
-#i don't even think we need the folowing, I just put them here jic loll we can take them out later
+#i don't even think we need the folowing import statements, I just put them here jic loll we can take them out later
 import pandas as pd   
 import matplotlib.pyplot as plt 
 import numpy as np
