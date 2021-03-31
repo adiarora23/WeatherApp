@@ -5,14 +5,14 @@ from tkinter import *
 import tkinter as tk
 from main import *
 import json
+import time
 from canada_cities import canada
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk  # Library used for handling images
 from configparser import ConfigParser  # Library used for config files
 import requests  # Library used to access web data
 from typing import Tuple, Optional, Union  # Library used for type hinting
-import time # Library used for time
-from datetime import datetime # Library used for time formats
+from datetime import datetime
 
 
 # ------------------------- GUI Classes -------------------------------
@@ -20,7 +20,7 @@ class WeatherApp:
 
     def __init__(self, api: str) -> None:
         self.root = Tk()
-        self.root.geometry('1700x700')
+        self.root.geometry('950x600')
         self.root.configure(bg="#34ABCD")
         self.api = api
         self.initGUI()
@@ -45,6 +45,9 @@ class WeatherApp:
 
         self.locationLbl = Label(self.root, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("bold", 22))
         self.locationLbl.pack()
+        
+        self.dayLbl = Label(self.root, text="Date", bg="#34ABCD", fg="#FFFFFF", font=("bold", 14))
+        self.dayLbl.pack()
 
         self.picture = Label(self.root, bg="#34ABCD", image=None)
         self.picture.pack()
@@ -55,51 +58,82 @@ class WeatherApp:
         self.desc = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 10))
         self.desc.pack()
 
-        self.weeklyLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="Weekly Forecast:", font=("bold", 17))
+        self.space = Label(self.root, bg="#34ABCD")
+        self.space.pack(pady=10)
+        
+        self.forecastFrame = Frame(self.root,bg="#34ABCD")
+        self.forecastFrame.pack()
+        
+        self.weeklyLbl = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="Weekly Forecast:", font=("bold", 17))
         self.weeklyLbl.pack()
+        
+        self.space = Label(self.forecastFrame, bg="#34ABCD")
+        self.space.pack()        
 
-        self.mondayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.mondayLbl.pack(side=tk.LEFT, padx=15)
+        self.day1Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day1Frame.pack(side=LEFT, padx=10)
 
-        self.mondayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.mondayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day1Lbl = Label(self.day1Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day1Lbl.pack()
 
-        self.tuesdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.tuesdayLbl.pack(side=tk.LEFT)
+        self.day1Img = Label(self.day1Frame, bg="#34ABCD", image=None)
+        self.day1Img.pack()
 
-        self.tuesdayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.tuesdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day2Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day2Frame.pack(side=LEFT, padx=10)
 
-        self.wednesdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.wednesdayLbl.pack(side=tk.LEFT)
+        self.day2Lbl = Label(self.day2Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day2Lbl.pack()
 
-        self.wednesdayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.wednesdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day2Img = Label(self.day2Frame, bg="#34ABCD", image=None)
+        self.day2Img.pack()
 
-        self.thursdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.thursdayLbl.pack(side=tk.LEFT)
+        self.day3Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day3Frame.pack(side=LEFT, padx=10)
 
-        self.thursdayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.thursdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day3Lbl = Label(self.day3Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day3Lbl.pack()
 
-        self.fridayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.fridayLbl.pack(side=tk.LEFT)
+        self.day3Img = Label(self.day3Frame, bg="#34ABCD", image=None)
+        self.day3Img.pack()
 
-        self.fridayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.fridayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day4Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day4Frame.pack(side=LEFT, padx=10)        
 
-        self.saturdayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.saturdayLbl.pack(side=tk.LEFT)
+        self.day4Lbl = Label(self.day4Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day4Lbl.pack()
 
-        self.saturdayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.saturdayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day4Img = Label(self.day4Frame, bg="#34ABCD", image=None)
+        self.day4Img.pack()
 
-        self.sundayLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
-        self.sundayLbl.pack(side=tk.LEFT)
+        self.day5Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day5Frame.pack(side=LEFT, padx=10) 
 
-        self.sundayImg = Label(self.root, bg="#34ABCD", image=None)
-        self.sundayImg.pack(side=tk.LEFT, padx=5, pady=10)
+        self.day5Lbl = Label(self.day5Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day5Lbl.pack()
 
+        self.day5Img = Label(self.day5Frame, bg="#34ABCD", image=None)
+        self.day5Img.pack()
+
+        self.day6Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day6Frame.pack(side=LEFT, padx=10) 
+
+        self.day6Lbl = Label(self.day6Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day6Lbl.pack()
+
+        self.day6Img = Label(self.day6Frame, bg="#34ABCD", image=None)
+        self.day6Img.pack()
+
+        self.day7Frame = Frame(self.forecastFrame,bg="#34ABCD")
+        self.day7Frame.pack(side=LEFT, padx=10) 
+
+        self.day7Lbl = Label(self.day7Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("bold", 15))
+        self.day7Lbl.pack()
+
+        self.day7Img = Label(self.day7Frame, bg="#34ABCD", image=None)
+        self.day7Img.pack()
+
+        
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
         menubar = Menu(self.root)
@@ -142,38 +176,46 @@ class WeatherApp:
             messagebox.showinfo(title=None, message="Please Enter a City")
         elif weather:
             self.locationLbl['text'] = f"{weather[0]}, {weather[1]}"
+            self.dayLbl['text'] = f"{weather[29]}"
             img = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[5]}.png").resize((115, 115)))
             self.picture["image"] = img
-            self.weatherLbl["text"] = f"Current temperature: {round(weather[2])}°C, {weather[3]}"
+            self.weatherLbl["text"] = f"Current Temperature: {round(weather[2])}°C, {weather[3]}"
             self.desc["text"] = f"{weather[4]}, feels like {round(weather[6])}°C"
+            
+            self.day1Frame["highlightbackground"],self.day1Frame["highlightthickness"] = "#FFFFFF",3
+            self.day1Lbl["text"] = f"{weather[22]}: {round(weather[8])}°C"
+            day1Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[15]}.png").resize((90, 90)))
+            self.day1Img["image"] = day1Pic
 
-            self.mondayLbl["text"] = f"Monday: {round(weather[8])}°C"
-            mondayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[15]}.png").resize((90, 90)))
-            self.mondayImg["image"] = mondayPic
+            self.day2Frame["highlightbackground"],self.day2Frame["highlightthickness"] = "#FFFFFF",3
+            self.day2Lbl["text"] = f"{weather[23]}: {round(weather[9])}°C"
+            day2Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[16]}.png").resize((90, 90)))
+            self.day2Img["image"] = day2Pic
 
-            self.tuesdayLbl["text"] = f"Tuesday: {round(weather[9])}°C"
-            tuesdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[16]}.png").resize((90, 90)))
-            self.tuesdayImg["image"] = tuesdayPic
+            self.day3Frame["highlightbackground"],self.day3Frame["highlightthickness"] = "#FFFFFF",3
+            self.day3Lbl["text"] = f"{weather[24]}: {round(weather[10])}°C"
+            day3Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[17]}.png").resize((90, 90)))
+            self.day3Img["image"] = day3Pic
 
-            self.wednesdayLbl["text"] = f"Wednesday: {round(weather[10])}°C"
-            wednesdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[17]}.png").resize((90, 90)))
-            self.wednesdayImg["image"] = wednesdayPic
+            self.day4Frame["highlightbackground"],self.day4Frame["highlightthickness"] = "#FFFFFF",3
+            self.day4Lbl["text"] = f"{weather[25]}: {round(weather[11])}°C"
+            day4Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[18]}.png").resize((90, 90)))
+            self.day4Img["image"] = day4Pic
+            
+            self.day5Frame["highlightbackground"],self.day5Frame["highlightthickness"] = "#FFFFFF",3
+            self.day5Lbl["text"] = f"{weather[26]}: {round(weather[12])}°C"
+            day5Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[19]}.png").resize((90, 90)))
+            self.day5Img["image"] = day5Pic
 
-            self.thursdayLbl["text"] = f"Thursday: {round(weather[11])}°C"
-            thursdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[18]}.png").resize((90, 90)))
-            self.thursdayImg["image"] = thursdayPic
+            self.day6Frame["highlightbackground"],self.day6Frame["highlightthickness"] = "#FFFFFF",3
+            self.day6Lbl["text"] = f"{weather[27]}: {round(weather[13])}°C"
+            day6Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[20]}.png").resize((90, 90)))
+            self.day6Img["image"] = day6Pic
 
-            self.fridayLbl["text"] = f"Friday: {round(weather[12])}°C"
-            fridayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[19]}.png").resize((90, 90)))
-            self.fridayImg["image"] = fridayPic
-
-            self.saturdayLbl["text"] = f"Saturday: {round(weather[13])}°C"
-            saturdayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[20]}.png").resize((90, 90)))
-            self.saturdayImg["image"] = saturdayPic
-
-            self.sundayLbl["text"] = f"Sunday: {round(weather[14])}°C"
-            sundayPic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[21]}.png").resize((90, 90)))
-            self.sundayImg["image"] = sundayPic
+            self.day7Frame["highlightbackground"],self.day7Frame["highlightthickness"] = "#FFFFFF",3
+            self.day7Lbl["text"] = f"{weather[28]}: {round(weather[14])}°C"
+            day7Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[21]}.png").resize((90, 90)))
+            self.day7Img["image"] = day7Pic
 
             self.root.mainloop()
         else:
@@ -196,7 +238,6 @@ def get_cityID(city: str) -> Tuple[Union[str, float]]:
 
 def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
     """ Returns a tuple containing strings and float """
-
     cityID = get_cityID(city)
     data = requests.get(api_url.format(cityID[2], cityID[3], api_key))
 
@@ -210,50 +251,63 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
         # will also be useful in providing data for graphing (i.e. change in temp throughout the week, etc.)
         # Isha can use this info to extract data and make appropriate graphs
         current_weather = data['current']['weather'][0]['main']
-        current_time = data['current']['dt']
-        current_time_form = datetime.utcfromtimestamp(int(current_time)).strftime('%Y-%m-%d %H:%M:%S')
-    
-        monday_temp = data['daily'][1]['temp']['day'] - 273.15
-        monday_img = data['daily'][1]['weather'][0]['icon']
-        monday_time = data['daily'][1]['dt']
-        monday_time_form = datetime.utcfromtimestamp(int(monday_time)).strftime('%Y-%m-%d %H:%M:%S')
+        current_day = time.ctime(data['current']['dt'])[:3] + ", " + time.ctime(data['current']['dt'])[4:11]
+        #current_time = data['current']['dt']
+        #current_time_form = datetime.utcfromtimestamp(int(current_time)).strftime('%Y-%m-%d %H:%M:%S')
+        #print(current_time_form)
+
+        day1_temp = data['daily'][1]['temp']['day'] - 273.15
+        day1_img = data['daily'][1]['weather'][0]['icon']
+        day1_day = time.ctime(data['daily'][1]['dt'])[:3]
+        #monday_time = data['daily'][1]['dt']
+        #monday_time_form = datetime.utcfromtimestamp(int(monday_time)).strftime('%Y-%m-%d %H:%M:%S')        
         
-        tuesday_temp = data['daily'][2]['temp']['day'] - 273.15
-        tuesday_img = data['daily'][2]['weather'][0]['icon']
-        tuesday_time = data['daily'][2]['dt']
-        tuesday_time_form = datetime.utcfromtimestamp(int(tuesday_time)).strftime('%Y-%m-%d %H:%M:%S')        
+        
+        day2_temp = data['daily'][2]['temp']['day'] - 273.15
+        day2_img = data['daily'][2]['weather'][0]['icon']
+        day2_day = time.ctime(data['daily'][2]['dt'])[:3]
+        #tuesday_time = data['daily'][2]['dt']
+        #tuesday_time_form = datetime.utcfromtimestamp(int(tuesday_time)).strftime('%Y-%m-%d %H:%M:%S') 
 
-        wednesday_temp = data['daily'][3]['temp']['day'] - 273.15
-        wednesday_img = data['daily'][3]['weather'][0]['icon']
-        wednesday_time = data['daily'][3]['dt']
-        wednesday_time_form = datetime.utcfromtimestamp(int(wednesday_time)).strftime('%Y-%m-%d %H:%M:%S')        
 
-        thursday_temp = data['daily'][4]['temp']['day'] - 273.15
-        thursday_img = data['daily'][4]['weather'][0]['icon']
-        thursday_time = data['daily'][4]['dt']
-        thursday_time_form = datetime.utcfromtimestamp(int(thursday_time)).strftime('%Y-%m-%d %H:%M:%S')         
+        day3_temp = data['daily'][3]['temp']['day'] - 273.15
+        day3_img = data['daily'][3]['weather'][0]['icon']
+        day3_day = time.ctime(data['daily'][3]['dt'])[:3]
+        #wednesday_time = data['daily'][3]['dt']
+        #wednesday_time_form = datetime.utcfromtimestamp(int(wednesday_time)).strftime('%Y-%m-%d %H:%M:%S')          
 
-        friday_temp = data['daily'][5]['temp']['day'] - 273.15
-        friday_img = data['daily'][5]['weather'][0]['icon']
-        friday_time = data['daily'][5]['dt']
-        friday_time_form = datetime.utcfromtimestamp(int(friday_time)).strftime('%Y-%m-%d %H:%M:%S')         
+        day4_temp = data['daily'][4]['temp']['day'] - 273.15
+        day4_img = data['daily'][4]['weather'][0]['icon']
+        day4_day = time.ctime(data['daily'][4]['dt'])[:3]
+        #thursday_time = data['daily'][4]['dt']
+        #thursday_time_form = datetime.utcfromtimestamp(int(thursday_time)).strftime('%Y-%m-%d %H:%M:%S')              
 
-        saturday_temp = data['daily'][6]['temp']['day'] - 273.15
-        saturday_img = data['daily'][6]['weather'][0]['icon']
-        saturday_time = data['daily'][3]['dt']
-        saturday_time_form = datetime.utcfromtimestamp(int(saturday_time)).strftime('%Y-%m-%d %H:%M:%S')         
 
-        sunday_temp = data['daily'][7]['temp']['day'] - 273.15
-        sunday_img = data['daily'][7]['weather'][0]['icon']
-        sunday_time = data['daily'][3]['dt']
-        sunday_time_form = datetime.utcfromtimestamp(int(sunday_time)).strftime('%Y-%m-%d %H:%M:%S')         
+        day5_temp = data['daily'][5]['temp']['day'] - 273.15
+        day5_img = data['daily'][5]['weather'][0]['icon']
+        day5_day = time.ctime(data['daily'][5]['dt'])[:3]
+        #friday_time = data['daily'][5]['dt']
+        #friday_time_form = datetime.utcfromtimestamp(int(friday_time)).strftime('%Y-%m-%d %H:%M:%S')         
+
+        day6_temp = data['daily'][6]['temp']['day'] - 273.15
+        day6_img = data['daily'][6]['weather'][0]['icon']
+        day6_day = time.ctime(data['daily'][6]['dt'])[:3]
+        #saturday_time = data['daily'][3]['dt']
+        #saturday_time_form = datetime.utcfromtimestamp(int(saturday_time)).strftime('%Y-%m-%d %H:%M:%S')         
+
+        day7_temp = data['daily'][7]['temp']['day'] - 273.15
+        day7_img = data['daily'][7]['weather'][0]['icon']
+        day7_day = time.ctime(data['daily'][7]['dt'])[:3]
+        #sunday_time = data['daily'][3]['dt']
+        #sunday_time_form = datetime.utcfromtimestamp(int(sunday_time)).strftime('%Y-%m-%d %H:%M:%S')        
 
         desc = data['current']['weather'][0]['description']
         img = data['current']['weather'][0]['icon']
 
         return (city, country, temp, current_weather, desc, img, feels_like,
-                weekly_forecast, monday_temp, tuesday_temp, wednesday_temp, thursday_temp, friday_temp, saturday_temp,
-                sunday_temp, monday_img, tuesday_img, wednesday_img, thursday_img, friday_img, saturday_img, sunday_img)
+                weekly_forecast, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp, day6_temp,
+                day7_temp, day1_img, day2_img, day3_img, day4_img, day5_img, day6_img, day7_img,
+                day1_day, day2_day, day3_day, day4_day, day5_day, day6_day, day7_day, current_day)
 
     else:
         return None
@@ -268,4 +322,3 @@ if __name__ == "__main__":
     config.read(file)
     api_key = config["testapi_key"]["key"]  # gets the key for API from the file
     app = WeatherApp(api_url)
-    
