@@ -3,13 +3,13 @@ import json
 with open('city.list.json', encoding='utf8') as f:
     data = json.load(f)
 
-ontario = ['Barrie', 'Belleville', 'Brampton', 'Brant', 'Brantford', 'Brockville', 'Burlington', 'Cambridge',
-           'Clarence-Rockland', 'Cornwall', 'Dryden', 'Elliot Lake', 'Greater Sudbury', 'Guelph', 'Haldimand County',
-           'Hamilton', 'Kawartha Lakes', 'Kenora', 'Kingston', 'Kitchener', 'London', 'Markham', 'Mississauga',
-           'Niagara Falls', 'Norfolk County', 'North Bay', 'Orillia', 'Oshawa', 'Ottawa', 'Owen Sound', 'Pembroke',
+ontario = ['Ajax', 'Barrie', 'Belleville', 'Brampton', 'Brant', 'Brantford', 'Brockville', 'Burlington','Cambridge',
+           'Clarence-Rockland', 'Cornwall', 'Dryden', 'Delhi', 'Elliot Lake', 'Georgetown','Greater Sudbury', 'Guelph', 'Haldimand County',
+           'Hamilton', 'Kawartha Lakes', 'Kenora', 'Kingston', 'Kitchener', 'London', 'Markham', 'Milton', 'Mississauga', 'Newcastle',
+           'Niagara Falls', 'Norfolk County', 'North Bay', 'Oakville','Orillia', 'Oshawa', 'Ottawa', 'Owen Sound', 'Paris', 'Parry Sound','Pembroke',
            'Peterborough', 'Pickering', 'Port Colborne', 'Prince Edward County', 'Quinte West', 'Richmond Hill',
-           'Sarnia', 'Sault Ste. Marie', 'St. Catharines', 'St. Thomas', 'Stratford', 'Temiskaming Shores', 'Thorold',
-           'Thunder Bay', 'Timmins', 'Toronto', 'Vaughan', 'Waterloo', 'Welland', 'Windsor', 'Woodstock']
+           'Sarnia', 'Sault Ste. Marie', 'St. Catharines', 'St. Thomas', 'Stratford', 'Greater Sudbury','Temiskaming Shores', 'Thorold',
+           'Thunder Bay', 'Timmins', 'Tottenham','Toronto', 'Vaughan','Waterloo', 'Welland', 'Whitby','Windsor', 'Woodbridge','Woodstock']
 
 canada = []
 for city in data:
