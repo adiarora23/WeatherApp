@@ -4,6 +4,7 @@
 from tkinter import *
 import tkinter as tk
 from main import *
+from graph import *
 import json
 import time
 from canada_cities import canada
@@ -245,7 +246,7 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
         data = data.json()
         city = cityID[0]
         country = cityID[1]
-        temp = data['current']['temp'] - 273.15
+        temp = data['current']['temp'] - 273.15 #convertion of K to C*
         feels_like = data['current']['feels_like'] - 273.15
         weekly_forecast = data['daily']  # will be used for displaying other days' weather,
         # will also be useful in providing data for graphing (i.e. change in temp throughout the week, etc.)
@@ -255,6 +256,9 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
         #current_time = data['current']['dt']
         #current_time_form = datetime.utcfromtimestamp(int(current_time)).strftime('%Y-%m-%d %H:%M:%S')
         #print(current_time_form)
+        
+        g = Graph()
+        g.temp_overview(data)        
 
         day1_temp = data['daily'][1]['temp']['day'] - 273.15
         day1_img = data['daily'][1]['weather'][0]['icon']
