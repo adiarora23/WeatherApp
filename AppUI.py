@@ -26,81 +26,68 @@ class WeatherApp:
         """ Starting Window """
         self.api = api
         self.root = Tk()
-        self.startRoot()
-
-    def startRoot(self) -> None:
-        """ Initializes the root for which the user will be shown on startup &
-            on which they request to search for another city. """
-        self.root.destroy()
-        self.start_root = Tk()
-        self.start_root.title('Welcome Weather App')
-        self.start_root.geometry('950x600')
-        self.start_root.config(bg='#34ABCD')
-        self.initStartGUI()
-
-    def initStartGUI(self) -> None:
-        """ Initializes GUI of the starting root (start_root_. """
-        self.start_Label = Label(self.start_root, text="Hello", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
-        self.start_Label.pack()
-
-        self.cityName = StringVar()
-        self.cityEntry = Entry(self.start_root, textvariable=self.cityName)
-        self.cityEntry.insert(0,'Enter City Name')
-        self.cityEntry.pack()
-
-        self.space = Label(self.start_root, bg="#34ABCD")  # adds a space between the entry box and button
-        self.space.pack()
-
-        self.searchBtn = Button(self.start_root, text="Search City", width=12, command=self.initPrimary)
-        self.searchBtn.pack()
-
-        #------------------------ Menu Bar -------------------------------------
-        start_menubar = Menu(self.start_root)
-        actions_menu = Menu(start_menubar, tearoff=0)
-        start_menubar.add_cascade(menu=actions_menu, label='Actions')
-        actions_menu.add_command(label='Quit', command=self.start_root.destroy)
-        self.start_root.config(menu=start_menubar)
-
-        self.start_root.mainloop()
-
-    def initPrimary(self) -> None:
-        """ Initializes the root for which all the data will be shown on. """
-        self.start_root.destroy()
-        self.root = Tk()
         self.root.title('Weather App')
         self.root.geometry('950x600')
         self.root.config(bg='#34ABCD')
-        self.initGUI() # TODO Gonna want to call this in the initStart method
+        self.root.rowconfigure(0, weight=1)
+        self.root.columnconfigure(0, weight=1)
+        self.startingFrame = Frame(self.root, bg="#34ABCD")
+        self.forecastFrame = Frame(self.root, bg="#34ABCD")
+        for frame in (self.startingFrame, self.forecastFrame):
+            frame.grid(row=0, column=0, sticky='nsew')
+        self.show_frame(self.startingFrame)
+        self.initStartGUI()
+        self.initGUI()
         self.initMenu()
-        self.search()
         self.root.mainloop()
+
+    def initStartGUI(self) -> None:
+        """ Initializes GUI of the starting root (start_root_. """
+
+        self.start_Label = Label(self.startingFrame, text="Hello", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.start_Label.pack()
+
+        self.cityName = StringVar()
+        self.cityEntry = Entry(self.startingFrame, textvariable=self.cityName)
+        self.cityEntry.insert(0,'Enter City Name')
+        self.cityEntry.pack()
+
+        self.space = Label(self.startingFrame, bg="#34ABCD")  # adds a space between the entry box and button
+        self.space.pack()
+
+        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.search()])
+        self.searchBtn.pack()
+
+        #------------------------ Menu Bar -------------------------------------
+        start_menubar = Menu(self.startingFrame)
+        actions_menu = Menu(start_menubar, tearoff=0)
+        start_menubar.add_cascade(menu=actions_menu, label='Actions')
+        actions_menu.add_command(label='Quit', command=self.root.destroy)
+        self.root.config(menu=start_menubar)
 
     def initGUI(self) -> None:
         """ Initializes GUI. """
 
-        self.space = Label(self.root, bg="#34ABCD")  # adds a space between button and Location text
+        self.space = Label(self.forecastFrame, bg="#34ABCD")  # adds a space between button and Location text
         self.space.pack()
 
-        self.locationLbl = Label(self.root, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.locationLbl = Label(self.forecastFrame, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
         self.locationLbl.pack()
 
-        self.dayLbl = Label(self.root, text="Date", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 14))
+        self.dayLbl = Label(self.forecastFrame, text="Date", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 14))
         self.dayLbl.pack()
 
-        self.picture = Label(self.root, bg="#34ABCD", image=None)
+        self.picture = Label(self.forecastFrame, bg="#34ABCD", image=None)
         self.picture.pack()
 
-        self.weatherLbl = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 17, "bold"))
+        self.weatherLbl = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 17, "bold"))
         self.weatherLbl.pack()
 
-        self.desc = Label(self.root, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 12))
+        self.desc = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 12))
         self.desc.pack()
 
-        self.space = Label(self.root, bg="#34ABCD")
+        self.space = Label(self.forecastFrame, bg="#34ABCD")
         self.space.pack(pady=10)
-
-        self.forecastFrame = Frame(self.root, bg="#34ABCD")
-        self.forecastFrame.pack()
 
         self.weeklyLbl = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="Weekly Forecast:",
                                font=("Century Gothic", 17, "bold"))
@@ -185,7 +172,7 @@ class WeatherApp:
         actions_menu.add_cascade(label='Change Unit', menu=submenu, underline=0)
         actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
         actions_menu.add_command(label='Save', command=self.save_weather)
-        actions_menu.add_command(label='Find Another City', command=self.startRoot)
+        actions_menu.add_command(label='Find Another City', command=self.show_frame(self.startingFrame))
         actions_menu.add_command(label='Quit', command=self.root.destroy)
 
         submenu.add_command(label='Celsius', command=self.display_celsius, underline=0)
@@ -301,6 +288,8 @@ class WeatherApp:
             messagebox.showerror("Search Error",
                                  f"Invalid input '{city}': city not found")
 
+    def show_frame(self, frame):
+        frame.tkraise()
 
 # TODO: update weather app with new API.
 # ------------------------- Function class -------------------------------
