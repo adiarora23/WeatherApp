@@ -1,57 +1,61 @@
-import pandas as pd   
-import matplotlib.pyplot as plt 
+import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 
-class Graph: #sdfjor;lawefks RETRY
-    
+
+class Graph:
+
     def __init__(self):
         self.labelx = ''
         self.labely = ''
-        
+
     def chart_temp_overview(self, df):
         plt.plot(df['date'].values, df['daily_avg'].values)
         plt.show
 
-    def temp_overview(self, all_data): 
-        temp_stats = ['day','min','max','night','eve','morn']#for the temp keys in dataset
-        time_of_day = ['day','night','eve','morn'] #for feels like keys in dataset
-        
+    def temp_overview(self, all_data):
+        temp_stats = ['day', 'min', 'max', 'night', 'eve', 'morn']  # for the temp keys in dataset
+        time_of_day = ['day', 'night', 'eve', 'morn']  # for feels like keys in dataset
+
         date = []
-        temps_avg = ['daily_avg', 'daily_min','daily_max','night_avg','eve_avg','morn_avg'] #key names for overview_dict
-        temps_fl = ['daily_fl','night_fl','eve_fl','morn_fl'] #key names for overview_dict
-        
+        temps_avg = ['daily_avg', 'daily_min', 'daily_max', 'night_avg', 'eve_avg',
+                     'morn_avg']  # key names for overview_dict
+        temps_fl = ['daily_fl', 'night_fl', 'eve_fl', 'morn_fl']  # key names for overview_dict
+
         overview_dict = {}
-        
-        for x in range(0,8): #for loop for the days
+
+        for x in range(0, 8):  # for loop for the days
             date.append(all_data['daily'][x]['dt'])
-        
+
         overview_dict['date'] = date
-            
+
         for key_name in temps_avg:
             overview_dict[key_name] = []
-            
-        for x in range(0,8):#for loop for the temp_avg's
-            for data_key,key_name in zip(temp_stats,temps_avg): #code help from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch01s15.html
+
+        for x in range(0, 8):  # for loop for the temp_avg's
+            for data_key, key_name in zip(temp_stats,
+                                          temps_avg):  # code help from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch01s15.html
                 value = (all_data['daily'][x]['temp'][data_key] - 273.15)
                 overview_dict[key_name].append(round(value))
-                
+
         for key_name in temps_fl:
             overview_dict[key_name] = []
-            
-        for x in range(0,8):#for loop for the temp_avg's
-            for data_key,key_name in zip(time_of_day,temps_fl): #code help from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch01s15.html
+
+        for x in range(0, 8):  # for loop for the temp_avg's
+            for data_key, key_name in zip(time_of_day,
+                                          temps_fl):  # code help from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch01s15.html
                 value = (all_data['daily'][x]['temp'][data_key] - 273.15)
                 overview_dict[key_name].append(round(value))
-            
-            
-        df = pd.DataFrame.from_dict(overview_dict) 
+
+        df = pd.DataFrame.from_dict(overview_dict)
         self.chart_temp_overview(df)
-    
+
     def sunshine(self):
         pass
-    
+
     def wind(self):
         pass
+
 
 '''
 {
@@ -208,14 +212,6 @@ class Graph: #sdfjor;lawefks RETRY
 ]
 }
 '''
-
-
-
-
-
-
-
-
 
 ''' #Current weather for thurs april 1, 2021
 {
