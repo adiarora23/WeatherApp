@@ -38,7 +38,6 @@ class WeatherApp:
         self.show_frame(self.startingFrame)
         self.initStartGUI()
         self.initGUI()
-        self.initMenu()
         self.root.mainloop()
 
     def initStartGUI(self) -> None:
@@ -55,7 +54,7 @@ class WeatherApp:
         self.space = Label(self.startingFrame, bg="#34ABCD")  # adds a space between the entry box and button
         self.space.pack()
 
-        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.search()])
+        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.initMenu(), self.search()])
         self.searchBtn.pack()
 
         #------------------------ Menu Bar -------------------------------------
@@ -159,6 +158,17 @@ class WeatherApp:
         self.day7Img = Label(self.day7Frame, bg="#34ABCD", image=None)
         self.day7Img.pack()
 
+        #------------------------------ Hidden ---------------------------------
+        self.nextCityLbl = Label(self.forecastFrame, text="Enter a city", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.nextcityName = StringVar()
+        self.nextCityEntry = Entry(self.forecastFrame, textvariable=self.nextcityName)
+        #self.nextCityEntry.insert(0,'Enter Next City Name')
+
+        self.nextSpace = Label(self.forecastFrame, bg="#34ABCD")  # adds a space between the entry box and button
+
+        self.nextSearchBtn = Button(self.forecastFrame, text="Search City", width=12, command=lambda:[self.search()])
+
+
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
         """ Initializes Menubar on the root that displays all data. """
@@ -172,7 +182,8 @@ class WeatherApp:
         actions_menu.add_cascade(label='Change Unit', menu=submenu, underline=0)
         actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
         actions_menu.add_command(label='Save', command=self.save_weather)
-        actions_menu.add_command(label='Find Another City', command=self.show_frame(self.startingFrame))
+        actions_menu.add_command(label='Find Another City', command=lambda:[self.un_hide(self.nextCityLbl), self.un_hide(self.nextCityEntry),
+                                                                            self.un_hide(self.nextSpace), self.un_hide(self.nextSearchBtn)])
         actions_menu.add_command(label='Quit', command=self.root.destroy)
 
         submenu.add_command(label='Celsius', command=self.display_celsius, underline=0)
@@ -235,7 +246,11 @@ class WeatherApp:
 
     def search(self) -> None:
         """ Searches the weather for the city entered. """
-        city = self.cityName.get()
+
+        if self.nextcityName.get() != "":
+            city = self.nextcityName.get()
+        else:
+            city = self.cityName.get()
         weather = get_weather(city)
 
         if city == "":
@@ -289,7 +304,14 @@ class WeatherApp:
                                  f"Invalid input '{city}': city not found")
 
     def show_frame(self, frame):
+        """ Raises the frame inputted into the function
+        to the top of the window. """
         frame.tkraise()
+
+    def un_hide(self, item):
+        """ Packs the item passed through to the frame currently displayed """
+        item.pack()
+
 
 # TODO: update weather app with new API.
 # ------------------------- Function class -------------------------------
