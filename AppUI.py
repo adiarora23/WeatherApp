@@ -16,33 +16,67 @@ from PIL import Image, ImageTk  # Library used for handling images
 from configparser import ConfigParser  # Library used for config files
 import requests  # Library used to access web data
 from typing import Tuple, Optional, Union  # Library used for type hinting
-from datetime import datetime
+from datetime import datetime # Library used for getting the time
 
 
 # ------------------------- GUI Classes -------------------------------
 class WeatherApp:
 
     def __init__(self, api: str) -> None:
+        """ Starting Window """
+        self.api = api
         self.root = Tk()
+        self.startRoot()
+
+    def startRoot(self) -> None:
+        """ Initializes the root for which the user will be shown on startup &
+            on which they request to search for another city. """
+        self.root.destroy()
+        self.start_root = Tk()
+        self.start_root.title('Welcome Weather App')
+        self.start_root.geometry('950x600')
+        self.start_root.config(bg='#34ABCD')
+        self.initStartGUI()
+
+    def initStartGUI(self) -> None:
+        """ Initializes GUI of the starting root (start_root_. """
+        self.start_Label = Label(self.start_root, text="Hello", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.start_Label.pack()
+
+        self.cityName = StringVar()
+        self.cityEntry = Entry(self.start_root, textvariable=self.cityName)
+        self.cityEntry.insert(0,'Enter City Name')
+        self.cityEntry.pack()
+
+        self.space = Label(self.start_root, bg="#34ABCD")  # adds a space between the entry box and button
+        self.space.pack()
+
+        self.searchBtn = Button(self.start_root, text="Search City", width=12, command=self.initPrimary)
+        self.searchBtn.pack()
+
+        #------------------------ Menu Bar -------------------------------------
+        start_menubar = Menu(self.start_root)
+        actions_menu = Menu(start_menubar, tearoff=0)
+        start_menubar.add_cascade(menu=actions_menu, label='Actions')
+        actions_menu.add_command(label='Quit', command=self.start_root.destroy)
+        self.start_root.config(menu=start_menubar)
+
+        self.start_root.mainloop()
+
+    def initPrimary(self) -> None:
+        """ Initializes the root for which all the data will be shown on. """
+        self.start_root.destroy()
+        self.root = Tk()
+        self.root.title('Weather App')
         self.root.geometry('950x600')
         self.root.config(bg='#34ABCD')
-        self.api = api
-        self.initGUI()
+        self.initGUI() # TODO Gonna want to call this in the initStart method
         self.initMenu()
+        self.search()
         self.root.mainloop()
 
     def initGUI(self) -> None:
-        """ Initializes GUI."""
-        self.cityName = StringVar()
-        self.cityEntry = Entry(self.root, textvariable=self.cityName)
-        self.cityEntry.pack()
-
-        self.space = Label(self.root, bg="#34ABCD")  # adds a space between the entry box and button
-        self.space.pack()
-
-        self.searchBtn = Button(self.root, text="Search City", width=12,
-                                command=self.search)
-        self.searchBtn.pack()
+        """ Initializes GUI. """
 
         self.space = Label(self.root, bg="#34ABCD")  # adds a space between button and Location text
         self.space.pack()
@@ -140,6 +174,7 @@ class WeatherApp:
 
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
+        """ Initializes Menubar on the root that displays all data. """
         menubar = Menu(self.root)
         actions_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(menu=actions_menu, label='Actions')
@@ -147,10 +182,10 @@ class WeatherApp:
         submenu = Menu(actions_menu, tearoff=0)
 
         # Actions for the user
-
         actions_menu.add_cascade(label='Change Unit', menu=submenu, underline=0)
         actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
         actions_menu.add_command(label='Save', command=self.save_weather)
+        actions_menu.add_command(label='Find Another City', command=self.startRoot)
         actions_menu.add_command(label='Quit', command=self.root.destroy)
 
         submenu.add_command(label='Celsius', command=self.display_celsius, underline=0)
@@ -160,13 +195,13 @@ class WeatherApp:
 
     # TODO edit these functions for API to use
     def __celsius_to_fahrenheit(self, celsius):
-        """Private Method: converts Celsius into Fahrenheit."""
+        """ Private Method: converts Celsius into Fahrenheit. """
 
         fahrenheit = (celsius * 9/5) + 32
         return round(fahrenheit)
 
     def display_celsius(self):
-        """Displays weather in Celsius."""
+        """ Displays weather in Celsius. """
 
         city = self.cityName.get()
         weather = get_weather(city)
@@ -182,7 +217,7 @@ class WeatherApp:
         self.day7Lbl["text"] = f"{weather[28]}: {round(weather[14])}°C"
 
     def display_fahrenheit(self):
-        """Displays weather in Fahrenheit."""
+        """ Displays weather in Fahrenheit. """
 
         city = self.cityName.get()
         weather = get_weather(city)
@@ -270,7 +305,7 @@ class WeatherApp:
 # TODO: update weather app with new API.
 # ------------------------- Function class -------------------------------
 def get_cityID(city: str) -> Tuple[Union[str, float]]:
-    """Returns the coordinates of the city the user entered"""
+    """ Returns the coordinates of the city the user entered """
     for place in canada:
         if place['name'].lower() == city.lower():
             if place['country'] == 'CA':
@@ -281,7 +316,7 @@ def get_cityID(city: str) -> Tuple[Union[str, float]]:
 
 
 def get_current_time():
-    """Returns the current time in a 12-hour scale."""
+    """ Returns the current time in a 12-hour scale. """
     current_time = datetime.now(timezone('US/Eastern'))
     get_hour = current_time.strftime('%I')
     if int(get_hour) < 10:
@@ -292,7 +327,7 @@ def get_current_time():
 
 
 def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
-    """Returns a tuple containing strings and float"""
+    """ Returns a tuple containing strings and float """
     cityID = get_cityID(city)
     data = requests.get(api_url.format(cityID[2], cityID[3], api_key))
 
@@ -350,9 +385,12 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
         return None
 
 
+
+
+
+
 # ------------------------- Main Loop -------------------------------
 if __name__ == "__main__":
-    # TODO: Justin will update API for this.
     api_url = "https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude=minutely,hourly&appid={}"
     file = "config.ini"  # config file that contains the key to access the API data
     config = ConfigParser()  # used to parse through config files
