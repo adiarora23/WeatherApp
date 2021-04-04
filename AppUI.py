@@ -60,7 +60,7 @@ class WeatherApp:
         self.space = Label(self.startingFrame, bg="#34ABCD")  # adds a space between the entry box and button
         self.space.pack()
 
-        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.initMenu(), self.search()])
+        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.initMenu(), self.search("Start")])
         self.searchBtn.pack()
 
         #------------------------ Menu Bar -------------------------------------
@@ -177,7 +177,7 @@ class WeatherApp:
 
         self.nextSpace = Label(self.searchFrame, bg="#34ABCD")  # adds a space between the entry box and button
 
-        self.nextSearchBtn = Button(self.searchFrame, text="Search City", width=12, command=lambda:[self.search()])
+        self.nextSearchBtn = Button(self.searchFrame, text="Search City", width=12, command=lambda:[self.search("Forecast")])
 
         self.searchFrame.pack()
 
@@ -257,14 +257,13 @@ class WeatherApp:
             saved_file.write(f"The time this was saved was at: {weather[30]}\n")
             saved_file.close()
 
-    def search(self) -> None:
+    def search(self, frame:str) -> None:
         """ Searches the weather for the city entered. """
-
-        if self.nextcityName.get() != "":
-            city = self.nextcityName.get()
-        else:
+        self.frame = frame
+        if self.frame == "Start":
             city = self.cityName.get()
-
+        elif self.frame == "Forecast":
+            city = self.nextcityName.get()
         weather = get_weather(city,self.api,self.key)
         self.searchFrame.destroy()
         self.reset_hidden()
