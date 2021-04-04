@@ -17,22 +17,28 @@ from configparser import ConfigParser  # Library used for config files
 import requests  # Library used to access web data
 from typing import Tuple, Optional, Union  # Library used for type hinting
 from datetime import datetime # Library used for getting the time
+import pickle
 
 
 # ------------------------- GUI Classes -------------------------------
 class WeatherApp:
 
-    def __init__(self, api: str) -> None:
+    def __init__(self, api: str, key: str) -> None:
         """ Starting Window """
         self.api = api
+        self.key = key
         self.root = Tk()
         self.root.title('Weather App')
-        self.root.geometry('950x600')
+        self.root.geometry('950x650')
         self.root.config(bg='#34ABCD')
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
         self.startingFrame = Frame(self.root, bg="#34ABCD")
         self.forecastFrame = Frame(self.root, bg="#34ABCD")
+        self.weekFrame = Frame(self.forecastFrame, bg="#34ABCD")
+
+        with open('history.pkl', 'rb') as history:
+            self.history = pickle.load(history)
         for frame in (self.startingFrame, self.forecastFrame):
             frame.grid(row=0, column=0, sticky='nsew')
         self.show_frame(self.startingFrame)
@@ -66,10 +72,6 @@ class WeatherApp:
 
     def initGUI(self) -> None:
         """ Initializes GUI. """
-
-        self.space = Label(self.forecastFrame, bg="#34ABCD")  # adds a space between button and Location text
-        self.space.pack()
-
         self.locationLbl = Label(self.forecastFrame, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
         self.locationLbl.pack()
 
@@ -95,7 +97,7 @@ class WeatherApp:
         self.space = Label(self.forecastFrame, bg="#34ABCD")
         self.space.pack()
 
-        self.day1Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day1Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day1Frame.pack(side=LEFT, padx=10)
 
         self.day1Lbl = Label(self.day1Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -104,7 +106,7 @@ class WeatherApp:
         self.day1Img = Label(self.day1Frame, bg="#34ABCD", image=None)
         self.day1Img.pack()
 
-        self.day2Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day2Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day2Frame.pack(side=LEFT, padx=10)
 
         self.day2Lbl = Label(self.day2Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -113,7 +115,7 @@ class WeatherApp:
         self.day2Img = Label(self.day2Frame, bg="#34ABCD", image=None)
         self.day2Img.pack()
 
-        self.day3Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day3Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day3Frame.pack(side=LEFT, padx=10)
 
         self.day3Lbl = Label(self.day3Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -122,7 +124,7 @@ class WeatherApp:
         self.day3Img = Label(self.day3Frame, bg="#34ABCD", image=None)
         self.day3Img.pack()
 
-        self.day4Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day4Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day4Frame.pack(side=LEFT, padx=10)
 
         self.day4Lbl = Label(self.day4Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -131,7 +133,7 @@ class WeatherApp:
         self.day4Img = Label(self.day4Frame, bg="#34ABCD", image=None)
         self.day4Img.pack()
 
-        self.day5Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day5Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day5Frame.pack(side=LEFT, padx=10)
 
         self.day5Lbl = Label(self.day5Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -140,7 +142,7 @@ class WeatherApp:
         self.day5Img = Label(self.day5Frame, bg="#34ABCD", image=None)
         self.day5Img.pack()
 
-        self.day6Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day6Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day6Frame.pack(side=LEFT, padx=10)
 
         self.day6Lbl = Label(self.day6Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -149,7 +151,7 @@ class WeatherApp:
         self.day6Img = Label(self.day6Frame, bg="#34ABCD", image=None)
         self.day6Img.pack()
 
-        self.day7Frame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.day7Frame = Frame(self.weekFrame, bg="#34ABCD")
         self.day7Frame.pack(side=LEFT, padx=10)
 
         self.day7Lbl = Label(self.day7Frame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 15))
@@ -158,16 +160,26 @@ class WeatherApp:
         self.day7Img = Label(self.day7Frame, bg="#34ABCD", image=None)
         self.day7Img.pack()
 
-        #------------------------------ Hidden ---------------------------------
-        self.nextCityLbl = Label(self.forecastFrame, text="Enter a city", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.weekFrame.pack()
+
+        self.space = Label(self.forecastFrame, bg="#34ABCD")
+        self.space.pack()
+
+        self.reset_hidden()
+
+
+    def reset_hidden(self):
+        self.searchFrame = Frame(self.forecastFrame, bg="#34ABCD")
+        self.nextCityLbl = Label(self.searchFrame, text="Enter a city", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
         self.nextcityName = StringVar()
-        self.nextCityEntry = Entry(self.forecastFrame, textvariable=self.nextcityName)
+        self.nextCityEntry = Entry(self.searchFrame, textvariable=self.nextcityName)
         #self.nextCityEntry.insert(0,'Enter Next City Name')
 
-        self.nextSpace = Label(self.forecastFrame, bg="#34ABCD")  # adds a space between the entry box and button
+        self.nextSpace = Label(self.searchFrame, bg="#34ABCD")  # adds a space between the entry box and button
 
-        self.nextSearchBtn = Button(self.forecastFrame, text="Search City", width=12, command=lambda:[self.search()])
+        self.nextSearchBtn = Button(self.searchFrame, text="Search City", width=12, command=lambda:[self.search()])
 
+        self.searchFrame.pack()
 
     # TODO: this will be updated constantly with new features as the project continues.
     def initMenu(self):
@@ -181,9 +193,10 @@ class WeatherApp:
         # Actions for the user
         actions_menu.add_cascade(label='Change Unit', menu=submenu, underline=0)
         actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
-        actions_menu.add_command(label='Save', command=self.save_weather)
         actions_menu.add_command(label='Find Another City', command=lambda:[self.un_hide(self.nextCityLbl), self.un_hide(self.nextCityEntry),
                                                                             self.un_hide(self.nextSpace), self.un_hide(self.nextSearchBtn)])
+        actions_menu.add_command(label='Search History', command=self.show_history)
+        actions_menu.add_command(label='Save', command=self.save_weather)
         actions_menu.add_command(label='Quit', command=self.root.destroy)
 
         submenu.add_command(label='Celsius', command=self.display_celsius, underline=0)
@@ -202,7 +215,7 @@ class WeatherApp:
         """ Displays weather in Celsius. """
 
         city = self.cityName.get()
-        weather = get_weather(city)
+        weather = get_weather(city,self.api,self.key)
         self.weatherLbl["text"] = f"Current Temperature: {round(weather[2])}°C, {weather[3]}"
         self.desc["text"] = f"{weather[4]}, feels like {round(weather[6])}°C"
 
@@ -218,7 +231,7 @@ class WeatherApp:
         """ Displays weather in Fahrenheit. """
 
         city = self.cityName.get()
-        weather = get_weather(city)
+        weather = get_weather(city,self.api,self.key)
         self.weatherLbl["text"] = f"Current Temperature: {round(self.__celsius_to_fahrenheit(weather[2]))}°F, {weather[3]}"
         self.desc["text"] = f"{weather[4]}, feels like {round(self.__celsius_to_fahrenheit(weather[6]))}°F"
 
@@ -235,7 +248,7 @@ class WeatherApp:
 
     def save_weather(self):
         city = self.cityName.get()
-        weather = get_weather(city)
+        weather = get_weather(city,self.api,self.key)
         saved_file = filedialog.asksaveasfile(mode='w', defaultextension='.txt')
         if saved_file is not None:
             saved_file.write(f"The city you chose was: {weather[0]}, {weather[1]}\n")
@@ -251,7 +264,10 @@ class WeatherApp:
             city = self.nextcityName.get()
         else:
             city = self.cityName.get()
-        weather = get_weather(city)
+
+        weather = get_weather(city,self.api,self.key)
+        self.searchFrame.destroy()
+        self.reset_hidden()
 
         if city == "":
             messagebox.showinfo(title=None, message="Please Enter a City")
@@ -298,6 +314,9 @@ class WeatherApp:
             day7Pic = ImageTk.PhotoImage(image=Image.open(f"icons/{weather[21]}.png").resize((90, 90)))
             self.day7Img["image"] = day7Pic
 
+            self.history.append(weather[0])
+            self.pickle_data()
+            self.reset_hidden()
             self.root.mainloop()
         else:
             messagebox.showerror("Search Error",
@@ -311,6 +330,17 @@ class WeatherApp:
     def un_hide(self, item):
         """ Packs the item passed through to the frame currently displayed """
         item.pack()
+
+    def show_history(self):
+        MsgBox = messagebox.askquestion("Search History","The cities you have searched for are: \n\n{"+", ".join(self.history)+
+                                        "}.   \n\n Would you like to clear your History?")
+        if MsgBox == 'yes':
+            self.history = []
+
+    def pickle_data(self):
+        with open('history.pkl','wb') as history:
+            pickle.dump(self.history,history)
+
 
 
 # TODO: update weather app with new API.
@@ -337,7 +367,7 @@ def get_current_time():
     return t
 
 
-def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
+def get_weather(city: str, api_url: str, api_key: str) -> Tuple[Optional[Union[str, float]]]:
     """ Returns a tuple containing strings and float """
     cityID = get_cityID(city)
     data = requests.get(api_url.format(cityID[2], cityID[3], api_key))
@@ -394,17 +424,3 @@ def get_weather(city: str) -> Tuple[Optional[Union[str, float]]]:
 
     else:
         return None
-
-
-
-
-
-
-# ------------------------- Main Loop -------------------------------
-if __name__ == "__main__":
-    api_url = "https://api.openweathermap.org/data/2.5/onecall?lat={}&lon={}&exclude=minutely,hourly&appid={}"
-    file = "config.ini"  # config file that contains the key to access the API data
-    config = ConfigParser()  # used to parse through config files
-    config.read(file)
-    api_key = config["testapi_key"]["key"]  # gets the key for API from the file
-    app = WeatherApp(api_url)
