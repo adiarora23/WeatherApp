@@ -10,7 +10,7 @@ from graph import *
 import json
 from pytz import timezone
 import time
-from canada_cities import canada
+from canada_cities import canada, ontario
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk  # Library used for handling images
 from configparser import ConfigParser  # Library used for config files
@@ -49,9 +49,25 @@ class WeatherApp:
     def initStartGUI(self) -> None:
         """ Initializes GUI of the starting root (start_root_. """
 
-        self.start_Label = Label(self.startingFrame, text="Hello", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
-        self.start_Label.pack()
+        self.space = Label(self.startingFrame, bg="#34ABCD")
+        self.space.pack(pady=80)
 
+        self.welcomeFrame = Frame(self.startingFrame, bg="#34ABCD")
+        self.welcomeFrame.pack()
+        
+        self.start_Label = Label(self.welcomeFrame, text="Welcome to our Weather App!", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 30, "bold"))
+        self.start_Label.pack(side=LEFT)
+
+        self.image = ImageTk.PhotoImage(image=Image.open(f"icons/logo.png").resize((90, 90)))
+        self.logo = Label(self.welcomeFrame, bg="#34ABCD", image=self.image)
+        self.logo.pack(side=LEFT,padx=10)
+
+        self.desc = self.desc = Label(self.startingFrame, bg="#34ABCD", fg="#FFFFFF", text="This App provides current weather information and 7-day forecast for cities all across Ontario, Canada.", font=("Century Gothic", 11))
+        self.desc.pack()
+
+        self.space = Label(self.startingFrame, bg="#34ABCD")
+        self.space.pack()
+        
         self.cityName = StringVar()
         self.cityEntry = Entry(self.startingFrame, textvariable=self.cityName)
         self.cityEntry.insert(0,'Enter City Name')
@@ -324,7 +340,12 @@ class WeatherApp:
     def show_frame(self, frame):
         """ Raises the frame inputted into the function
         to the top of the window. """
-        frame.tkraise()
+        if frame == self.forecastFrame:
+            for city in ontario:
+                if self.cityEntry.get().lower() == city.lower():
+                    frame.tkraise()
+        else:
+            frame.tkraise()
 
     def un_hide(self, item):
         """ Packs the item passed through to the frame currently displayed """
