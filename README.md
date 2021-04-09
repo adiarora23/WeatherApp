@@ -103,6 +103,11 @@ The `history.pkl` file contains the history of cities searched for on the applic
 #### `main.py` ####
 The `main.py` file is used to run the entire application.
 
+#### `icons` ####
+The `icons` folder contains all the icons used for both the starting frame and the main frame.
+
+These icons can be found on the same website used for our API (link will be in code comments).
+
 
 # Addendums: #
 
