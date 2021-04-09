@@ -16,7 +16,7 @@ from PIL import Image, ImageTk  # Library used for handling images
 from configparser import ConfigParser  # Library used for config files
 import requests  # Library used to access web data
 from typing import Tuple, Optional, Union  # Library used for type hinting
-from datetime import datetime # Library used for getting the time
+from datetime import datetime  # Library used for getting the time
 import pickle
 
 
@@ -37,6 +37,8 @@ class WeatherApp:
         self.forecastFrame = Frame(self.root, bg="#34ABCD")
         self.weekFrame = Frame(self.forecastFrame, bg="#34ABCD")
 
+        self.graphObject = Graph()  # CHANGES
+
         with open('history.pkl', 'rb') as history:
             self.history = pickle.load(history)
         for frame in (self.startingFrame, self.forecastFrame):
@@ -54,32 +56,37 @@ class WeatherApp:
 
         self.welcomeFrame = Frame(self.startingFrame, bg="#34ABCD")
         self.welcomeFrame.pack()
-        
-        self.start_Label = Label(self.welcomeFrame, text="Welcome to our Weather App!", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 30, "bold"))
+
+        self.start_Label = Label(self.welcomeFrame, text="Welcome to our Weather App!", bg="#34ABCD", fg="#FFFFFF",
+                                 font=("Century Gothic", 30, "bold"))
         self.start_Label.pack(side=LEFT)
 
         self.image = ImageTk.PhotoImage(image=Image.open(f"icons/logo.png").resize((90, 90)))
         self.logo = Label(self.welcomeFrame, bg="#34ABCD", image=self.image)
-        self.logo.pack(side=LEFT,padx=10)
+        self.logo.pack(side=LEFT, padx=10)
 
-        self.desc = self.desc = Label(self.startingFrame, bg="#34ABCD", fg="#FFFFFF", text="This App provides current weather information and 7-day forecast for cities all across Ontario, Canada.", font=("Century Gothic", 11))
+        self.desc = self.desc = Label(self.startingFrame, bg="#34ABCD", fg="#FFFFFF",
+                                      text="This App provides current weather information and 7-day forecast for cities all across Ontario, Canada.",
+                                      font=("Century Gothic", 11))
         self.desc.pack()
 
         self.space = Label(self.startingFrame, bg="#34ABCD")
         self.space.pack()
-        
+
         self.cityName = StringVar()
         self.cityEntry = Entry(self.startingFrame, textvariable=self.cityName)
-        self.cityEntry.insert(0,'Enter City Name')
+        self.cityEntry.insert(0, 'Enter City Name')
         self.cityEntry.pack()
 
         self.space = Label(self.startingFrame, bg="#34ABCD")  # adds a space between the entry box and button
         self.space.pack()
 
-        self.searchBtn = Button(self.startingFrame, text="Search City", width=12, command=lambda:[self.show_frame(self.forecastFrame), self.initMenu(), self.search("Start")])
+        self.searchBtn = Button(self.startingFrame, text="Search City", width=12,
+                                command=lambda: [self.show_frame(self.forecastFrame), self.initMenu(),
+                                                 self.search("Start")])
         self.searchBtn.pack()
 
-        #------------------------ Menu Bar -------------------------------------
+        # ------------------------ Menu Bar -------------------------------------
         start_menubar = Menu(self.startingFrame)
         actions_menu = Menu(start_menubar, tearoff=0)
         start_menubar.add_cascade(menu=actions_menu, label='Actions')
@@ -88,7 +95,8 @@ class WeatherApp:
 
     def initGUI(self) -> None:
         """ Initializes GUI. """
-        self.locationLbl = Label(self.forecastFrame, text="Location", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.locationLbl = Label(self.forecastFrame, text="Location", bg="#34ABCD", fg="#FFFFFF",
+                                 font=("Century Gothic", 22, "bold"))
         self.locationLbl.pack()
 
         self.dayLbl = Label(self.forecastFrame, text="Date", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 14))
@@ -97,7 +105,8 @@ class WeatherApp:
         self.picture = Label(self.forecastFrame, bg="#34ABCD", image=None)
         self.picture.pack()
 
-        self.weatherLbl = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 17, "bold"))
+        self.weatherLbl = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="",
+                                font=("Century Gothic", 17, "bold"))
         self.weatherLbl.pack()
 
         self.desc = Label(self.forecastFrame, bg="#34ABCD", fg="#FFFFFF", text="", font=("Century Gothic", 12))
@@ -183,17 +192,18 @@ class WeatherApp:
 
         self.reset_hidden()
 
-
     def reset_hidden(self):
         self.searchFrame = Frame(self.forecastFrame, bg="#34ABCD")
-        self.nextCityLbl = Label(self.searchFrame, text="Enter a city", bg="#34ABCD", fg="#FFFFFF", font=("Century Gothic", 22, "bold"))
+        self.nextCityLbl = Label(self.searchFrame, text="Enter a city", bg="#34ABCD", fg="#FFFFFF",
+                                 font=("Century Gothic", 22, "bold"))
         self.nextcityName = StringVar()
         self.nextCityEntry = Entry(self.searchFrame, textvariable=self.nextcityName)
-        #self.nextCityEntry.insert(0,'Enter Next City Name')
+        # self.nextCityEntry.insert(0,'Enter Next City Name')
 
         self.nextSpace = Label(self.searchFrame, bg="#34ABCD")  # adds a space between the entry box and button
 
-        self.nextSearchBtn = Button(self.searchFrame, text="Search City", width=12, command=lambda:[self.search("Forecast")])
+        self.nextSearchBtn = Button(self.searchFrame, text="Search City", width=12,
+                                    command=lambda: [self.search("Forecast")])
 
         self.searchFrame.pack()
 
@@ -205,12 +215,16 @@ class WeatherApp:
         menubar.add_cascade(menu=actions_menu, label='Actions')
 
         submenu = Menu(actions_menu, tearoff=0)
+        submenu2 = Menu(actions_menu, tearoff=0)
+        submenu3 = Menu(submenu2, tearoff=0)
 
         # Actions for the user
         actions_menu.add_cascade(label='Change Unit', menu=submenu, underline=0)
-        actions_menu.add_command(label='Display Graph', command=self.display_graph)  # TODO: edit this
-        actions_menu.add_command(label='Find Another City', command=lambda:[self.un_hide(self.nextCityLbl), self.un_hide(self.nextCityEntry),
-                                                                            self.un_hide(self.nextSpace), self.un_hide(self.nextSearchBtn)])
+        actions_menu.add_cascade(label='Display Graph', menu=submenu2, underline=0)
+
+        actions_menu.add_command(label='Find Another City',
+                                 command=lambda: [self.un_hide(self.nextCityLbl), self.un_hide(self.nextCityEntry),
+                                                  self.un_hide(self.nextSpace), self.un_hide(self.nextSearchBtn)])
         actions_menu.add_command(label='Search History', command=self.show_history)
         actions_menu.add_command(label='Save', command=self.save_weather)
         actions_menu.add_command(label='Quit', command=self.root.destroy)
@@ -218,20 +232,44 @@ class WeatherApp:
         submenu.add_command(label='Celsius', command=self.display_celsius, underline=0)
         submenu.add_command(label='Fahrenheit', command=self.display_fahrenheit, underline=0)
 
+        submenu2.add_command(label='Temperature Overview',
+                             command=lambda: [self.graphObject.chart_temp_overview(self.graphCity)])
+        submenu2.add_cascade(label='Special Options', menu=submenu3, underline=0)
+        
+        submenu3.add_command(label='daily avg', command=lambda: self.graphObject.custom('daily_avg', self.graphCity, 'Daily Average'), underline=0)
+        
+        submenu3.add_command(label='daily min', command=lambda: self.graphObject.custom('daily_min', self.graphCity, 'Daily Min'), underline=0)
+        
+        submenu3.add_command(label='daily max', command=lambda: self.graphObject.custom('daily_max', self.graphCity, 'Daily Max'), underline=0)
+        
+        submenu3.add_command(label='night avg', command=lambda: self.graphObject.custom('night_avg', self.graphCity, 'Nightly Average'), underline=0)
+        
+        submenu3.add_command(label='eve avg', command=lambda: self.graphObject.custom('eve_avg', self.graphCity, 'Evening Average'), underline=0)
+        
+        submenu3.add_command(label='morn avg', command=lambda: self.graphObject.custom('morn_avg', self.graphCity, 'Morning Average'), underline=0)
+        
+        submenu3.add_command(label='daily feels like', command=lambda: self.graphObject.custom('daily_fl', self.graphCity, 'Daily Feels Like'), underline=0)
+        
+        submenu3.add_command(label='night feels like', command=lambda: self.graphObject.custom('night_fl', self.graphCity, 'Nightly Feels Like'), underline=0)
+        
+        submenu3.add_command(label='eve feels like', command=lambda: self.graphObject.custom('eve_fl', self.graphCity, 'Evening Feels Like'), underline=0)
+        
+        submenu3.add_command(label='morn feels like', command=lambda: self.graphObject.custom('morn_fl', self.graphCity, 'Morning Feels Like'), underline=0)
+
         self.root.config(menu=menubar)
 
     # TODO edit these functions for API to use
     def __celsius_to_fahrenheit(self, celsius):
         """ Private Method: converts Celsius into Fahrenheit. """
 
-        fahrenheit = (celsius * 9/5) + 32
+        fahrenheit = (celsius * 9 / 5) + 32
         return round(fahrenheit)
 
     def display_celsius(self):
         """ Displays weather in Celsius. """
 
         city = self.cityName.get()
-        weather = get_weather(city,self.api,self.key)
+        weather = get_weather(city, self.api, self.key)
         self.weatherLbl["text"] = f"Current Temperature: {round(weather[2])}°C, {weather[3]}"
         self.desc["text"] = f"{weather[4]}, feels like {round(weather[6])}°C"
 
@@ -247,8 +285,9 @@ class WeatherApp:
         """ Displays weather in Fahrenheit. """
 
         city = self.cityName.get()
-        weather = get_weather(city,self.api,self.key)
-        self.weatherLbl["text"] = f"Current Temperature: {round(self.__celsius_to_fahrenheit(weather[2]))}°F, {weather[3]}"
+        weather = get_weather(city, self.api, self.key)
+        self.weatherLbl[
+            "text"] = f"Current Temperature: {round(self.__celsius_to_fahrenheit(weather[2]))}°F, {weather[3]}"
         self.desc["text"] = f"{weather[4]}, feels like {round(self.__celsius_to_fahrenheit(weather[6]))}°F"
 
         self.day1Lbl["text"] = f"{weather[22]}: {round(self.__celsius_to_fahrenheit(weather[8]))}°F"
@@ -259,28 +298,29 @@ class WeatherApp:
         self.day6Lbl["text"] = f"{weather[27]}: {round(self.__celsius_to_fahrenheit(weather[13]))}°F"
         self.day7Lbl["text"] = f"{weather[28]}: {round(self.__celsius_to_fahrenheit(weather[14]))}°F"
 
-    def display_graph(self):
-        pass
-
     def save_weather(self):
         city = self.cityName.get()
-        weather = get_weather(city,self.api,self.key)
+        weather = get_weather(city, self.api, self.key)
         saved_file = filedialog.asksaveasfile(mode='w', defaultextension='.txt')
         if saved_file is not None:
             saved_file.write(f"The city you chose was: {weather[0]}, {weather[1]}\n")
-            saved_file.write(f"The temperature for that city at the time was: {round(weather[2])}°C ({round(self.__celsius_to_fahrenheit(weather[2]))}°F)\n")
+            saved_file.write(
+                f"The temperature for that city at the time was: {round(weather[2])}°C ({round(self.__celsius_to_fahrenheit(weather[2]))}°F)\n")
             saved_file.write(f"The type of weather for that city at the time was: {weather[3]}\n")
             saved_file.write(f"The time this was saved was at: {weather[30]}\n")
             saved_file.close()
 
-    def search(self, frame:str) -> None:
+    def search(self, frame: str) -> None:
         """ Searches the weather for the city entered. """
         self.frame = frame
         if self.frame == "Start":
             city = self.cityName.get()
         elif self.frame == "Forecast":
             city = self.nextcityName.get()
-        weather = get_weather(city,self.api,self.key)
+        weather = get_weather(city, self.api, self.key)
+        self.graphCity = city
+        x = weather[31]
+        self.graphObject.data_frame(x)
         self.searchFrame.destroy()
         self.reset_hidden()
 
@@ -352,15 +392,15 @@ class WeatherApp:
         item.pack()
 
     def show_history(self):
-        MsgBox = messagebox.askquestion("Search History","The cities you have searched for are: \n\n{"+", ".join(self.history)+
+        MsgBox = messagebox.askquestion("Search History",
+                                        "The cities you have searched for are: \n\n{" + ", ".join(self.history) +
                                         "}.   \n\n Would you like to clear your History?")
         if MsgBox == 'yes':
             self.history = []
 
     def pickle_data(self):
-        with open('history.pkl','wb') as history:
-            pickle.dump(self.history,history)
-
+        with open('history.pkl', 'wb') as history:
+            pickle.dump(self.history, history)
 
 
 # TODO: update weather app with new API.
@@ -398,13 +438,12 @@ def get_weather(city: str, api_url: str, api_key: str) -> Tuple[Optional[Union[s
         country = cityID[1]
         temp = data['current']['temp'] - 273.15  # convertion of K to C*
         feels_like = data['current']['feels_like'] - 273.15
-        weekly_forecast = data['daily'] # used to extract data for graphs
+        weekly_forecast = data['daily']  # used to extract data for graphs
         current_weather = data['current']['weather'][0]['main']
         current_day = time.ctime(data['current']['dt'])[:3] + ", " + time.ctime(data['current']['dt'])[4:11]
         current_time = get_current_time()
 
-        g = Graph()
-        g.temp_overview(data)
+        # CHANGES (deleted teh creation of a new graph object)
 
         day1_temp = data['daily'][1]['temp']['day'] - 273.15
         day1_img = data['daily'][1]['weather'][0]['icon']
@@ -440,7 +479,7 @@ def get_weather(city: str, api_url: str, api_key: str) -> Tuple[Optional[Union[s
         return (city, country, temp, current_weather, desc, img, feels_like,
                 weekly_forecast, day1_temp, day2_temp, day3_temp, day4_temp, day5_temp, day6_temp,
                 day7_temp, day1_img, day2_img, day3_img, day4_img, day5_img, day6_img, day7_img,
-                day1_day, day2_day, day3_day, day4_day, day5_day, day6_day, day7_day, current_day, current_time)
+                day1_day, day2_day, day3_day, day4_day, day5_day, day6_day, day7_day, current_day, current_time, data)
 
     else:
         return None
