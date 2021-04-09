@@ -1,8 +1,9 @@
 import json
 
-with open('city.list.json', encoding='utf8') as f:
+with open('city.list.json', encoding='utf8') as f:  # opens the city list in json format from api
     data = json.load(f)
 
+# All Ontario cities (That we could find)
 ontario = ['Ajax', 'Barrie', 'Belleville', 'Brampton', 'Brant', 'Brantford', 'Brockville', 'Burlington','Cambridge',
            'Clarence-Rockland', 'Cornwall', 'Dryden', 'Delhi', 'Elliot Lake', 'Georgetown','Greater Sudbury', 'Guelph', 'Haldimand County',
            'Hamilton', 'Kawartha Lakes', 'Kenora', 'Kingston', 'Kitchener', 'London', 'Markham', 'Milton', 'Mississauga', 'Newcastle',
@@ -13,6 +14,6 @@ ontario = ['Ajax', 'Barrie', 'Belleville', 'Brampton', 'Brant', 'Brantford', 'Br
 
 canada = []
 for city in data:
-    if city['country'] == 'CA':
-        if city['name'] in ontario:
-            canada.append(city)
+    if city['country'] == 'CA':  # filters cities to Canada only
+        if city['name'] in ontario:  # filters cities to Ontario only
+            canada.append(city)  # appends city data (lat, lon, etc.)
