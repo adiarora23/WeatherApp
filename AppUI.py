@@ -12,7 +12,7 @@ Welcome icon is from: https://logodix.com/logos/1158291
 Credits to TA (Yi Rong Tin) for coding format.
 initGUI and initMenu follow coding format from lab 9.
 
-Sample API response: https://api.openweathermap.org/data/2.5/onecall?lat=43.595310&lon=-79.640579&exclude=minutely&appid=255e1d02bea1125f701381721fdf6eea
+Sample API response: https://api.openweathermap.org/data/2.5/onecall?lat=43.595310&lon=-79.640579&exclude=minutely&appid={api_key}
 """
 # -------- Import Files ---------
 from tkinter import *
