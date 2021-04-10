@@ -121,7 +121,7 @@ For this project, I worked with Muhammad, Justin and Isha to help setup the appl
 
 ### Justin Sousa: ###
 
-(TODO: add addendum)
+For this project, changing the overall UI from different roots to all seperate frames. Along side with that I worked with Muhammed and Aditya in the overall UI of the application. In terms of UI, I completed the welcome screen, setting up the menus as there were some problems with that. Also general error checking, primarily in the search function, and passing data between the two frames. 
 
 ### Isha Joshi: ###
 
