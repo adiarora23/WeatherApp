@@ -113,7 +113,7 @@ These icons can be found on the same website used for our API (link will be in c
 
 ### Aditya Arora: ###
 
-For this project, I worked with Muhammad, Justin and Isha to help setup the application (specifically, extracting the correct API data needed for this app), as well as handle most of the documentation needed (includes README.md file). I also contributed to the project by maintaining the Github repo to limit merge conflict issues, along with using the API data to display the 7-day weather on the main GUI. 
+For this project, I worked with Muhammad, Justin and Isha to help setup the application (specifically, extracting the correct API data needed for this app), as well as handle most of the documentation needed (includes README.md file). I also contributed to the project by maintaining the Github repo to limit merge conflict issues, along with using the API data to display the 7-day weather on the main GUI. As for management, I helped organize weekly meetings with the group to make sure we are on top of our priorities via Zoom calls.  
 
 ### Muhammad Hassan: ###
 
