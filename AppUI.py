@@ -43,6 +43,7 @@ class WeatherApp:
         self.root.config(bg='#34ABCD')
         self.root.rowconfigure(0, weight=1)
         self.root.columnconfigure(0, weight=1)
+        # Frame stuff from: https://www.youtube.com/watch?v=_auZ8TTkojQ
         self.startingFrame = Frame(self.root, bg="#34ABCD")
         self.forecastFrame = Frame(self.root, bg="#34ABCD")
         self.weekFrame = Frame(self.forecastFrame, bg="#34ABCD")
@@ -423,6 +424,7 @@ class WeatherApp:
     def show_frame(self, frame):
         """ Raises the frame inputted into the function
         to the top of the window. """
+        # Inspired from: https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
         # flips frame only if user enters correct city
         if frame == self.forecastFrame:
             for city in ontario:
