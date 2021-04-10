@@ -125,7 +125,7 @@ For this project, I changed the overall UI from different roots to all seperate 
 
 ### Isha Joshi: ###
 
-(TODO: add addendum)
+For this project, I created appropriate graph methods in graph.py which the user can see upon selection. I made the method to show the Temperature Overview for any valid city that is searched by the user and the method make a user-customizable graph. I also created an intensive dataframe which stores main weather data points into a pandas dataframe. This is mainly used for the graphing methods but can be called upon command in the code once a city is saved.
 
 # References: #
 

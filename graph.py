@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
-import os
 
 
 class Graph:
@@ -9,15 +8,17 @@ class Graph:
     def __init__(self):
         """Initializes graph class. """
         self.isDfSet = False  # checks if dataframe is empty
-        self.dataframe = {}
+        self.dataframe = {} #dataframe to make graphs (setup as a dict here but a pandas dataframe will be assignmed to it in the method below)
+    
+ # //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    def data_frame(self, all_data):
+    def data_frame(self, all_data): #pass the json file or dict into this mehtod
         """ Creates the dataframe. """
-        overview_dict = {}
+        overview_dict = {} #dict to be turned into a pandas dataframe
 
         daily_stats_df = ['date', 'sunrise time', 'sunset time', 'pressure', 'humidity', 'dew point', 'wind speed',
-                          'clouds', 'uvi']  # relevant graphing data from api
-        daily_ds_keys = ['dt', 'sunrise', 'sunset', 'pressure', 'humidity', 'dew_point', 'wind_speed', 'clouds', 'uvi']  # relevant keys from api
+                          'clouds', 'uvi']  # names for keys in dataframe to be made
+        daily_ds_keys = ['dt', 'sunrise', 'sunset', 'pressure', 'humidity', 'dew_point', 'wind_speed', 'clouds', 'uvi']  # names for keys in data set that will be passed
 
         temp_stats = ['day', 'min', 'max', 'night', 'eve', 'morn']  # for the temp keys in dataset
         time_of_day = ['day', 'night', 'eve', 'morn']  # for feels like keys in dataset
@@ -27,7 +28,7 @@ class Graph:
         temps_fl = ['daily_fl', 'night_fl', 'eve_fl', 'morn_fl']  # key names for overview_dict
 
         for key_name in daily_stats_df:
-            overview_dict[key_name] = []  # setting key,value to empty
+            overview_dict[key_name] = []  # setting the key, value would be empty for now
 
         for x in range(0, 8):  # for loop for daily weather stats
             for ds_key, df_key_name in zip(daily_ds_keys, daily_stats_df):  # simultaneously runs multiple loops at once (avoids nested loops)
@@ -47,10 +48,10 @@ class Graph:
                     overview_dict[df_key_name].append(round(value))  # stores the wind speeds for upcoming days
 
                 else:
-                    overview_dict[df_key_name].append(all_data['daily'][x][ds_key])
+                    overview_dict[df_key_name].append(all_data['daily'][x][ds_key]) #stores any remaining data set values
 
         for key_name in temps_avg:
-            overview_dict[key_name] = []  # setting key,value to empty
+            overview_dict[key_name] = []  # setting the key, value would be empty for now
 
         for x in range(0, 8):  # for loop for the temp_avg's
             for data_key, key_name in zip(temp_stats,
@@ -59,9 +60,9 @@ class Graph:
                 overview_dict[key_name].append(round(value))  # collects average temp values based on ds_key
 
         for key_name in temps_fl:
-            overview_dict[key_name] = []  # setting key,value to empty
+            overview_dict[key_name] = []  # setting the key, value would be empty for now
 
-        for x in range(0, 8):  # for loop for the temp_avg's
+        for x in range(0, 8):  # for loop for the temps_fl
             for data_key, key_name in zip(time_of_day,
                                           temps_fl):  # code help from https://www.oreilly.com/library/view/python-cookbook/0596001673/ch01s15.html
                 value = (all_data['daily'][x]['temp'][data_key] - 273.15)
@@ -69,13 +70,12 @@ class Graph:
 
         df = pd.DataFrame.from_dict(overview_dict)
         self.isDfSet = True
-        pd.set_option('display.max_columns',
-                      None)  # https://thispointer.com/python-pandas-how-to-display-full-dataframe-i-e-print-all-rows-columns-without-truncation/
+        pd.set_option('display.max_columns', None)  # Only if you want to check the dataframe for refernce, code help from https://thispointer.com/python-pandas-how-to-display-full-dataframe-i-e-print-all-rows-columns-without-truncation/
         self.dataframe = df
 
-    # //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    def chart_temp_overview(self, cityName):
+    def chart_temp_overview(self, cityName): #makes an overview graph for the city the user has entered
         """ Displays Temperature Overview for city. """
         plt.figure(figsize=(10, 8))
         x = self.dataframe['date'].values  # gets the date labels for x-axis
@@ -86,20 +86,25 @@ class Graph:
 
         # plot graph
         plt.plot(x, y1, color='yellow', label='Daily Averages', lw=5,
-                 marker='*', markersize=10, markerfacecolor='blue', markeredgecolor='blue')
+                 marker='*', markersize=10, markerfacecolor='blue', markeredgecolor='blue') #since it is an important value, it is supposed to stand out on the graph
         plt.plot(x, y2, color='blue', label='Daily feels like', ls='--')
         plt.plot(x, y3, color='green', label='Daily max')
         plt.plot(x, y4, color='red', label='Daily min')
 
         # for visual neatness
-        plt.tick_params(axis='x', rotation=45)
-        plt.grid()
-        plt.axhline(y=0, color='black', label='Freezing Point')
+        plt.tick_params(axis='x', rotation=45) #rotates x label to make room for display
+        plt.grid() #shows grid
+        plt.axhline(y=0, color='black', label='Freezing Point') #shows whenever temp is below freezing
 
         plt.title(f'Temperature Overview For the Next 7 Days in {cityName}, ON')
-        plt.legend()
+        plt.legend() #show legend
+        plt.xlabel('Date')
+        plt.ylabel('Temp in °C')
+        plt.tight_layout() #so labels and graph fit in the window
 
-        plt.show()
+        plt.show() #show graph
+        
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     def custom(self, y_val, cityName, y_lab):
         """ Displays graph based on user's option of choice. """
@@ -108,14 +113,18 @@ class Graph:
 
         else:  # creates the graph based on user's choice
             plt.figure(figsize=(10, 8)) 
-            x = self.dataframe['date'].values
-            y = self.dataframe[y_val].values
-            plt.plot(x, y, color='red', label=y_val)
+            x = self.dataframe['date'].values #x value will always be the date
+            y = self.dataframe[y_val].values #y value will be whatever the user selects
+            plt.plot(x, y, color='red', label=y_val) #plot line
 
-            plt.tick_params(axis='x', rotation=45)
-            plt.grid()
+            # for visual neatness
+            plt.tick_params(axis='x', rotation=45) #rotates x label to make room for display
+            plt.grid() #shows grid
+            
+            #label configuration
             plt.title(y_lab + ' in ' + cityName + ' for the next 7 days')
             plt.xlabel('Date')
             plt.ylabel(y_lab + ' in °C')
-            plt.tight_layout()
+            plt.tight_layout() #so labels and graph fit in the window
+            
             plt.show()
