@@ -117,11 +117,11 @@ For this project, I worked with Muhammad, Justin and Isha to help setup the appl
 
 ### Muhammad Hassan: ###
 
-(TODO: add addendum)
+For this project, I teamed up with Aditya, Justin and Isha to create a Weather App, which provides weather information for cities across Ontario. When it comes to individual contribution, I helped with setting up the API, and setting the layouts of AppUI and the welcome window. I also contributed to adding the persistence element (history.pkl). In general, I worked mostly with the API data and the main GUI of the app.
 
 ### Justin Sousa: ###
 
-For this project, changing the overall UI from different roots to all seperate frames. Along side with that I worked with Muhammed and Aditya in the overall UI of the application. In terms of UI, I completed the welcome screen, setting up the menus as there were some problems with that. Also general error checking, primarily in the search function, and passing data between the two frames. 
+For this project, I changed the overall UI from different roots to all seperate frames. Along side with that I worked with Muhammed and Aditya in the overall UI of the application. In terms of UI, I completed the welcome screen, setting up the menus as there were some problems with that. Also general error checking, primarily in the search function, and passing data between the two frames. 
 
 ### Isha Joshi: ###
 
